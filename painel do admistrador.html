@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - Sonho de Pijamas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+    <div class="admin-container">
+        
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-topo">
+                <div class="logo-admin">🌙 Painel Sonho</div>
+                <ul class="sidebar-menu">
+                    <li class="ativo"><a href="#">📦 Produtos</a></li>
+                </ul>
+            </div>
+            <a href="index.html" class="btn-sair">⬅️ Ver Site</a>
+        </aside>
+        
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="conteudo-principal">
+            
+            <div class="header-admin">
+                <h1>Gerenciar Catálogo</h1>
+                <button class="btn-primary" onclick="document.getElementById('cadastro').scrollIntoView({behavior: 'smooth'})">+ Novo Pijama</button>
+            </div>
+
+            <!-- ESTATÍSTICAS RÁPIDAS -->
+            <div class="cards-resumo">
+                <div class="card-mini"><p>Total Produtos</p><span id="qtd-total">0</span></div>
+                <div class="card-mini"><p>Feminino</p><span id="qtd-fem">0</span></div>
+                <div class="card-mini"><p>Infantil</p><span id="qtd-inf">0</span></div>
+            </div>
+
+            <!-- FORMULÁRIO DE CADASTRO -->
+            <section class="secao-cadastro" id="cadastro">
+                <h2>Adicionar Novo Produto</h2>
+                <form class="form-grid" id="form-produto">
+                    <div class="form-grupo">
+                        <label>Nome do Pijama</label>
+                        <input type="text" id="prod-nome" placeholder="Ex: Americano Cetim Girafa" required>
+                    </div>
+                    <div class="form-grupo">
+                        <label>Preço (R$)</label>
+                        <input type="number" step="0.01" min="0" id="prod-preco" placeholder="Ex: 89.90" required>
+                    </div>
+                    <div class="form-grupo">
+                        <label>Categoria</label>
+                        <select id="prod-categoria">
+                            <option value="feminino">Feminino</option>
+                            <option value="infantil">Infantil</option>
+                        </select>
+                    </div>
+                    <div class="form-grupo">
+                        <label>URL da Imagem / Nome do Arquivo</label>
+                        <input type="text" id="prod-img" placeholder="Ex: baby alça.jpeg" required>
+                    </div>
+                    <div class="form-grupo total">
+                        <button type="submit" class="btn-primary">Salvar Produto no Catálogo</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- LISTAGEM ATUAL -->
+            <section class="secao-tabela">
+                <div class="tabela-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Foto</th>
+                                <th>Nome</th>
+                                <th>Categoria</th>
+                                <th>Preço</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-produtos">
+                            <!-- Injetado dinamicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="admin.js"></script>
+
+</body>
+</html>

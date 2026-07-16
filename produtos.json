@@ -1,0 +1,29 @@
+[
+    {
+        "nome":"Baby Alça Hello Kitty",
+        "preco":53,
+        "categoria":"Feminino",
+        "imagem":"img/americano-snoopy.jpg"
+    },
+
+    {
+        "nome":"Camisola Mia",
+        "preco":58,
+        "categoria":"feminino",
+        "imagem":"img/camisola-mia.jpg"
+    },
+
+    {
+        "nome":"Baby Sonho Super Poderosas",
+        "preco":64,
+        "categoria":"feminino",
+        "imagem":"img/baby-sonho.jpg"
+    },
+
+    {
+        "nome":"Americano Snoopy",
+        "preco":100,
+        "categoria":"Feminino",
+        "imagem":"img/americano-snoopy.jpg"
+    }
+]

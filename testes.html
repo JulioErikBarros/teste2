@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Testes Automatizados - Sonho de Pijamas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0b0f19 0%, #111827 50%, #1e1b4b 100%);
+            color: #f3f4f6;
+            min-height: 100vh;
+            padding: 40px 20px;
+            overflow-y: scroll;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #6366f1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4f46e5;
+        }
+
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+            padding-bottom: 20px;
+        }
+
+        .logo-area h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #dfb86c 0%, #f4ce84 50%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .logo-area p {
+            color: #9ca3af;
+            font-size: 0.95rem;
+        }
+
+        .btn-run {
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+        }
+
+        .btn-run:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+        }
+
+        .btn-run:active {
+            transform: scale(0.98);
+        }
+
+        /* ESTATÍSTICAS */
+        .resumo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .card-stat {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            backdrop-filter: blur(16px);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s;
+        }
+
+        .card-stat:hover {
+            transform: translateY(-4px);
+            border-color: rgba(99, 102, 241, 0.3);
+            background: rgba(30, 41, 59, 0.65);
+        }
+
+        .card-stat p {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .card-stat span {
+            font-size: 2.5rem;
+            font-weight: 800;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .card-stat.sucesso span {
+            color: #34d399;
+            text-shadow: 0 0 15px rgba(52, 211, 153, 0.3);
+        }
+
+        .card-stat.falha span {
+            color: #f87171;
+            text-shadow: 0 0 15px rgba(248, 113, 113, 0.3);
+        }
+
+        .card-stat.total span {
+            color: #60a5fa;
+            text-shadow: 0 0 15px rgba(96, 165, 250, 0.3);
+        }
+
+        .card-stat.tempo span {
+            color: #fbbf24;
+            text-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
+        }
+
+        /* PROGRESSO */
+        .progress-bar-wrapper {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(99, 102, 241, 0.1);
+            border-radius: 50px;
+            height: 12px;
+            margin-bottom: 40px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1 0%, #a855f7 50%, #34d399 100%);
+            transition: width 0.4s ease;
+            border-radius: 50px;
+        }
+
+        /* CONTEÚDO EM GRID (TESTES + PREVIEW) */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1.4fr 0.8fr;
+            gap: 30px;
+        }
+
+        @media(max-width: 900px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* LISTA DOS TESTES */
+        .lista-testes {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .teste-item {
+            background: rgba(30, 41, 59, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .teste-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #9ca3af;
+        }
+
+        .teste-item.running::before {
+            background: #60a5fa;
+            animation: pulse-border 1.5s infinite;
+        }
+
+        .teste-item.passed::before {
+            background: #34d399;
+        }
+
+        .teste-item.failed::before {
+            background: #f87171;
+        }
+
+        @keyframes pulse-border {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+
+        .teste-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .teste-info h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .teste-info span {
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        .badge {
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge.waiting { background: rgba(156, 163, 175, 0.15); color: #9ca3af; }
+        .badge.running { background: rgba(96, 165, 250, 0.15); color: #60a5fa; animation: pulse-text 1.5s infinite; }
+        .badge.passed { background: rgba(52, 211, 153, 0.15); color: #34d399; }
+        .badge.failed { background: rgba(248, 113, 113, 0.15); color: #f87171; }
+
+        @keyframes pulse-text {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        /* DETALHES DE ASSERÇÕES */
+        .assercoes-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 15px;
+        }
+
+        .assercoes-list li {
+            font-size: 0.9rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .assercoes-list li.ok {
+            color: #a7f3d0;
+        }
+
+        .assercoes-list li.err {
+            color: #fca5a5;
+            font-weight: 500;
+        }
+
+        .assercoes-list li .icon {
+            font-size: 1rem;
+        }
+
+        .assercoes-list li.ok .icon { color: #34d399; }
+        .assercoes-list li.err .icon { color: #f87171; }
+
+        /* PREVIEW IFRAME */
+        .preview-area {
+            position: sticky;
+            top: 40px;
+            background: rgba(30, 41, 59, 0.35);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 10px;
+        }
+
+        .preview-header h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .preview-device {
+            width: 100%;
+            flex-grow: 1;
+            background: #1e293b;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 4px solid #334155;
+            position: relative;
+        }
+
+        .preview-device iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        .preview-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #9ca3af;
+            padding: 20px;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .preview-overlay.hidden {
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard">
+        
+        <header>
+            <div class="logo-area">
+                <h1>🌙 Sonho de Pijamas</h1>
+                <p>Suite de Testes de Integração e E2E via Navegador</p>
+            </div>
+            <button class="btn-run" id="btn-run" onclick="iniciarTestes()">
+                ▶️ Iniciar Testes
+            </button>
+        </header>
+
+        <!-- CARDS DE ESTATÍSTICA -->
+        <div class="resumo-grid">
+            <div class="card-stat total">
+                <p>Total de Testes</p>
+                <span id="stat-total">8</span>
+            </div>
+            <div class="card-stat sucesso">
+                <p>Sucessos</p>
+                <span id="stat-sucesso">0</span>
+            </div>
+            <div class="card-stat falha">
+                <p>Falhas</p>
+                <span id="stat-falha">0</span>
+            </div>
+            <div class="card-stat tempo">
+                <p>Tempo Total</p>
+                <span id="stat-tempo">0.0s</span>
+            </div>
+        </div>
+
+        <!-- BARRA DE PROGRESSO -->
+        <div class="progress-bar-wrapper">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <!-- LAYOUT DE CONTEÚDO -->
+        <div class="main-layout">
+            
+            <!-- LISTAGEM DOS TESTES -->
+            <div class="lista-testes" id="lista-testes">
+                
+                <!-- TESTE 1 -->
+                <div class="teste-item" id="t-1">
+                    <div class="teste-header">
+                        <div class="teste-info">
+                            <h3>1. Fallback de Produtos Padrão</h3>
+                            <span>Valida o carregamento dos pijamas iniciais quando o catálogo local está vazio.</span>
+                        </div>
+                        <span class="badge waiting" id="badge-1">Aguardando</span>
+                    </div>
+                    <ul class="assercoes-list" id="assertions-1" style="display: none;"></ul>
+                </div>
+
+                <!-- TESTE 2 -->
+                <div class="teste-item" id="t-2">
+                    <div class="teste-header">
+                        <div class="teste-info">
+                            <h3>2. Adição ao Carrinho / Sacola</h3>
+                            <span>Valida o clique em "Adicionar" e a atualização de quantidade e soma de valores.</span>
+                        </div>
+                        <span class="badge waiting" id="badge-2">Aguardando</span>
+                    </div>
+                    <ul class="assercoes-list" id="assertions-2" style="display: none;"></ul>
+                </div>
+
+                <!-- TESTE 3 -->
+                <div class="teste-item" id="t-3">
+                    <div class="teste-header">
+                        <div class="teste-info">
+                            <h3>3. Esvaziar Sacola</h3>
+                            <span>Valida se o botão de esvaziar remove os itens do carrinho e recolhe a barra flutuante.</span>
+                        </div>
+                        <span class="badge waiting" id="badge-3">Aguardando</span>
+                    </div>
+                    <ul class="assercoes-list" id="assertions-3" style="display: none;"></ul>
+                </div>
+
+                <!-- TESTE 4 -->
+                <div class="teste-item" id="t-4">
+                    <div class="teste-header">
+                        <div class="teste-info">
+                            <h3>4. Filtro por Busca</h3>
+                            <span>Valida a filtragem de exibição dos cards baseada no campo de texto de pesquisa.</span>
+                        </div>
+                        <span class="badge waiting" id="badge-4">Aguardando</span>
+                    </div>
+                    <ul class="assercoes-list" id="assertions-4" style="display: none;"></ul>
+                </div>
+
+                <!-- TESTE 5 -->
+                <div class="teste-item" id="t-5">
+                    <div class="teste-header">
+                        <div class="teste-info">
+                            <h3>5. Filtro por Categoria</h3>
+                            <span>Valida a exibição baseada nos botões de categorias ("Feminino", "Infantil").</span>
+                        </div>
+                        <span class="badge waiting" id="badge-5">Aguardando</span>
+                    </div>
+                    <ul class="assercoes-list" id="assertions-5" style="display: none;"></ul>
+                </div>
+
+                <!-- TESTE 6 -->
+                <div class="teste-item" id="t-6">
+                    <div class="teste-header">
+                        <div class="teste-info">
+                            <h3>6. Painel Admin - Inicialização e Contadores</h3>
+                            <span>Valida se o painel administrativo carrega com a quantidade e estatísticas corretas.</span>
+                        </div>
+                        <span class="badge waiting" id="badge-6">Aguardando</span>
+                    </div>
+                    <ul class="assercoes-list" id="assertions-6" style="display: none;"></ul>
+                </div>
+
+                <!-- TESTE 7 -->
+                <div class="teste-item" id="t-7">
+                    <div class="teste-header">
+                        <div class="teste-info">
+                            <h3>7. Painel Admin - Adição de Produto</h3>
+                            <span>Valida o cadastro de um novo produto e o reflexo nos contadores de categorias.</span>
+                        </div>
+                        <span class="badge waiting" id="badge-7">Aguardando</span>
+                    </div>
+                    <ul class="assercoes-list" id="assertions-7" style="display: none;"></ul>
+                </div>
+
+                <!-- TESTE 8 -->
+                <div class="teste-item" id="t-8">
+                    <div class="teste-header">
+                        <div class="teste-info">
+                            <h3>8. Painel Admin - Exclusão de Produto</h3>
+                            <span>Valida a remoção de um pijama pelo painel e a atualização do LocalStorage.</span>
+                        </div>
+                        <span class="badge waiting" id="badge-8">Aguardando</span>
+                    </div>
+                    <ul class="assercoes-list" id="assertions-8" style="display: none;"></ul>
+                </div>
+
+            </div>
+
+            <!-- PREVIEW AREA -->
+            <div class="preview-area">
+                <div class="preview-header">
+                    <h3>Visualização em Tempo Real (Iframe)</h3>
+                    <span id="preview-filename" style="font-size: 0.85rem; color: #a855f7; font-weight: bold;">Nenhum arquivo carregado</span>
+                </div>
+                <div class="preview-device">
+                    <div class="preview-overlay" id="preview-overlay">
+                        Os iframes de teste carregarão aqui dinamicamente à medida que os testes avançarem.
+                    </div>
+                    <iframe id="test-iframe"></iframe>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        // ESTADO GLOBAL DO RUNNER
+        let testRunning = false;
+        let sucessos = 0;
+        let falhas = 0;
+        const totalTestes = 8;
+        let tempoInicio = 0;
+
+        function updateProgress(index) {
+            const pct = (index / totalTestes) * 100;
+            document.getElementById('progress-bar').style.width = pct + '%';
+        }
+
+        function setBadge(id, status, text) {
+            const badge = document.getElementById(`badge-${id}`);
+            const item = document.getElementById(`t-${id}`);
+            badge.className = `badge ${status}`;
+            badge.innerText = text;
+
+            item.className = `teste-item ${status}`;
+        }
+
+        function logAssertion(id, ok, msg) {
+            const ul = document.getElementById(`assertions-${id}`);
+            ul.style.display = 'flex';
+            const li = document.createElement('li');
+            li.className = ok ? 'ok' : 'err';
+            li.innerHTML = `<span class="icon">${ok ? '✔️' : '❌'}</span> ${msg}`;
+            ul.appendChild(li);
+        }
+
+        function clearAssertions(id) {
+            const ul = document.getElementById(`assertions-${id}`);
+            ul.innerHTML = '';
+            ul.style.display = 'none';
+        }
+
+        // CARREGA UM IFRAME E RETORNA UMA PROMESSA
+        function loadIframe(url) {
+            return new Promise((resolve) => {
+                const overlay = document.getElementById('preview-overlay');
+                overlay.className = 'preview-overlay hidden';
+                
+                const filenameSpan = document.getElementById('preview-filename');
+                filenameSpan.innerText = url;
+
+                const iframe = document.getElementById('test-iframe');
+                iframe.src = url;
+                iframe.onload = () => {
+                    // Delay curto para garantir execução de scripts internos
+                    setTimeout(() => {
+                        resolve({
+                            win: iframe.contentWindow,
+                            doc: iframe.contentDocument
+                        });
+                    }, 300);
+                };
+            });
+        }
+
+        // EXECUÇÃO DA SUÍTE
+        async function iniciarTestes() {
+            if (testRunning) return;
+            testRunning = true;
+            sucessos = 0;
+            falhas = 0;
+            
+            document.getElementById('btn-run').innerText = "⏳ Rodando Testes...";
+            document.getElementById('btn-run').style.opacity = 0.6;
+            document.getElementById('btn-run').disabled = true;
+
+            document.getElementById('stat-sucesso').innerText = "0";
+            document.getElementById('stat-falha').innerText = "0";
+            document.getElementById('stat-tempo').innerText = "0.0s";
+            
+            tempoInicio = performance.now();
+            updateProgress(0);
+
+            for (let i = 1; i <= totalTestes; i++) {
+                setBadge(i, 'waiting', 'Aguardando');
+                clearAssertions(i);
+            }
+
+            try {
+                // TESTE 1: Fallback de Produtos Padrão
+                await rodarTeste1();
+                updateProgress(1);
+
+                // TESTE 2: Adição ao Carrinho
+                await rodarTeste2();
+                updateProgress(2);
+
+                // TESTE 3: Esvaziar Sacola
+                await rodarTeste3();
+                updateProgress(3);
+
+                // TESTE 4: Filtro por Busca
+                await rodarTeste4();
+                updateProgress(4);
+
+                // TESTE 5: Filtro por Categoria
+                await rodarTeste5();
+                updateProgress(5);
+
+                // TESTE 6: Painel Admin - Estatísticas
+                await rodarTeste6();
+                updateProgress(6);
+
+                // TESTE 7: Painel Admin - Adição
+                await rodarTeste7();
+                updateProgress(7);
+
+                // TESTE 8: Painel Admin - Exclusão
+                await rodarTeste8();
+                updateProgress(8);
+
+            } catch (e) {
+                console.error("Erro fatal durante a suíte de testes:", e);
+            } finally {
+                const tempoTotal = ((performance.now() - tempoInicio) / 1000).toFixed(1);
+                document.getElementById('stat-tempo').innerText = `${tempoTotal}s`;
+                document.getElementById('btn-run').innerText = "▶️ Iniciar Testes";
+                document.getElementById('btn-run').style.opacity = 1;
+                document.getElementById('btn-run').disabled = false;
+                testRunning = false;
+            }
+        }
+
+        // ==========================================
+        // IMPLEMENTAÇÕES ESPECÍFICAS DOS CASOS DE TESTE
+        // ==========================================
+
+        async function rodarTeste1() {
+            setBadge(1, 'running', 'Executando');
+            let testeOk = true;
+
+            // Limpa o localStorage para validar o fallback de pijamas padrão
+            localStorage.clear();
+            
+            const { win, doc } = await loadIframe('index.html');
+
+            // Asserção A: Verificação dos dados em localStorage
+            const localData = JSON.parse(win.localStorage.getItem('produtos_catalogo'));
+            if (localData && localData.length === 4) {
+                logAssertion(1, true, "produtos_catalogo criado no LocalStorage com 4 produtos padrão.");
+            } else {
+                logAssertion(1, false, "produtos_catalogo não encontrado ou com tamanho incorreto.");
+                testeOk = false;
+            }
+
+            // Asserção B: Renderização no DOM
+            const cards = doc.querySelectorAll('.grid .card');
+            if (cards.length === 4) {
+                logAssertion(1, true, "Renderizou 4 cards de produtos no DOM do catálogo.");
+            } else {
+                logAssertion(1, false, `Esperava renderizar 4 cards no DOM, encontrou ${cards.length}.`);
+                testeOk = false;
+            }
+
+            // Asserção C: Título de um produto
+            const primeiroNome = cards[0].querySelector('.info h3').innerText;
+            if (primeiroNome === "Baby Alça Hello kitty") {
+                logAssertion(1, true, "Primeiro produto corresponde ao padrão: 'Baby Alça Hello kitty'.");
+            } else {
+                logAssertion(1, false, `Título do primeiro card incorreto: '${primeiroNome}'.`);
+                testeOk = false;
+            }
+
+            finalizarTeste(1, testeOk);
+        }
+
+        async function rodarTeste2() {
+            setBadge(2, 'running', 'Executando');
+            let testeOk = true;
+
+            const { win, doc } = await loadIframe('index.html');
+
+            const botoesAdd = doc.querySelectorAll('.card .add-bag');
+            if (botoesAdd.length > 0) {
+                // Clique 1: Adicionar o primeiro pijama (R$ 53,00)
+                botoesAdd[0].click();
+                
+                if (win.carrinho.length === 1 && win.carrinho[0].quantidade === 1) {
+                    logAssertion(2, true, "Adicionado com sucesso na array carrinho (1 item, qtd 1).");
+                } else {
+                    logAssertion(2, false, "Array carrinho inválido após clique.");
+                    testeOk = false;
+                }
+
+                // Verifica sacola visível e dados textuais
+                const sacola = doc.getElementById('sacola');
+                const itensQtdText = doc.getElementById('itens-qtd').innerText;
+                const totalPrecoText = doc.getElementById('total-preco').innerText;
+
+                if (sacola.classList.contains('active') && itensQtdText.includes("1 item") && totalPrecoText.includes("53,00")) {
+                    logAssertion(2, true, "Interface da sacola ativada e mostrando: R$ 53,00 (1 item).");
+                } else {
+                    logAssertion(2, false, `Interface da sacola inválida. Qtd: '${itensQtdText}', Preço: '${totalPrecoText}', Classes: ${sacola.className}`);
+                    testeOk = false;
+                }
+
+                // Clique 2: Adicionar o mesmo pijama de novo
+                botoesAdd[0].click();
+                if (win.carrinho[0].quantidade === 2) {
+                    logAssertion(2, true, "Incrementou a quantidade do mesmo pijama para 2.");
+                } else {
+                    logAssertion(2, false, `Quantidade não incrementou. Valor: ${win.carrinho[0].quantidade}`);
+                    testeOk = false;
+                }
+
+                const totalPrecoText2 = doc.getElementById('total-preco').innerText;
+                if (totalPrecoText2.includes("106,00")) {
+                    logAssertion(2, true, "Preço total atualizado na sacola para R$ 106,00.");
+                } else {
+                    logAssertion(2, false, `Preço total incorreto na sacola: ${totalPrecoText2}`);
+                    testeOk = false;
+                }
+            } else {
+                logAssertion(2, false, "Não foi possível encontrar o botão 'Adicionar à Sacola'.");
+                testeOk = false;
+            }
+
+            finalizarTeste(2, testeOk);
+        }
+
+        async function rodarTeste3() {
+            setBadge(3, 'running', 'Executando');
+            let testeOk = true;
+
+            const { win, doc } = await loadIframe('index.html');
+            
+            // Adiciona item primeiro
+            const botoesAdd = doc.querySelectorAll('.card .add-bag');
+            botoesAdd[0].click();
+
+            // Esvazia
+            const botaoLimpar = doc.querySelector('.limpar-sacola');
+            if (botaoLimpar) {
+                botaoLimpar.click();
+                
+                if (win.carrinho.length === 0) {
+                    logAssertion(3, true, "Array carrinho esvaziado com sucesso.");
+                } else {
+                    logAssertion(3, false, "Array carrinho não foi limpo.");
+                    testeOk = false;
+                }
+
+                const sacola = doc.getElementById('sacola');
+                if (!sacola.classList.contains('active')) {
+                    logAssertion(3, true, "Sacola oculta da tela (recolhida).");
+                } else {
+                    logAssertion(3, false, "Sacola continuou visível (ativa).");
+                    testeOk = false;
+                }
+            } else {
+                logAssertion(3, false, "Botão 'Esvaziar' não encontrado.");
+                testeOk = false;
+            }
+
+            finalizarTeste(3, testeOk);
+        }
+
+        async function rodarTeste4() {
+            setBadge(4, 'running', 'Executando');
+            let testeOk = true;
+
+            const { win, doc } = await loadIframe('index.html');
+
+            const campoBusca = doc.getElementById('campo-busca');
+            if (campoBusca) {
+                campoBusca.value = "Mia";
+                win.filtrarPijamas(); // executa função de filtro
+
+                const cardsVisiveis = Array.from(doc.querySelectorAll('.grid .card')).filter(card => !card.classList.contains('escondido'));
+                const cardsEscondidos = Array.from(doc.querySelectorAll('.grid .card')).filter(card => card.classList.contains('escondido'));
+
+                if (cardsVisiveis.length === 1) {
+                    logAssertion(4, true, "Encontrou exatamente 1 pijama visível para o termo de pesquisa 'Mia'.");
+                } else {
+                    logAssertion(4, false, `Esperava 1 pijama visível, mas encontrou ${cardsVisiveis.length}`);
+                    testeOk = false;
+                }
+
+                if (cardsEscondidos.length === 3) {
+                    logAssertion(4, true, "Escondeu com sucesso os outros 3 pijamas.");
+                } else {
+                    logAssertion(4, false, `Esperava 3 pijamas escondidos, encontrou ${cardsEscondidos.length}`);
+                    testeOk = false;
+                }
+
+                const nomeVisivel = cardsVisiveis[0].querySelector('.info h3').innerText;
+                if (nomeVisivel.includes("Mia")) {
+                    logAssertion(4, true, `O produto visível corresponde a pesquisa: '${nomeVisivel}'`);
+                } else {
+                    logAssertion(4, false, `O card exibido está errado: '${nomeVisivel}'`);
+                    testeOk = false;
+                }
+            } else {
+                logAssertion(4, false, "Input de busca não encontrado.");
+                testeOk = false;
+            }
+
+            finalizarTeste(4, testeOk);
+        }
+
+        async function rodarTeste5() {
+            setBadge(5, 'running', 'Executando');
+            let testeOk = true;
+
+            const { win, doc } = await loadIframe('index.html');
+
+            // Executa filtro por categoria "infantil"
+            win.filtrarCategoria('infantil', null);
+
+            const cardsVisiveis = Array.from(doc.querySelectorAll('.grid .card')).filter(card => !card.classList.contains('escondido'));
+            const cardsEscondidos = Array.from(doc.querySelectorAll('.grid .card')).filter(card => card.classList.contains('escondido'));
+
+            if (cardsVisiveis.length === 2 && cardsEscondidos.length === 2) {
+                logAssertion(5, true, "Divisão correta de categorias: 2 visíveis (infantis) e 2 escondidas (femininas).");
+            } else {
+                logAssertion(5, false, `Divisão incorreta. Visíveis: ${cardsVisiveis.length}, Escondidas: ${cardsEscondidos.length}`);
+                testeOk = false;
+            }
+
+            // Verifica se todos os visíveis realmente possuem data-category = infantil
+            let todosInfantis = true;
+            cardsVisiveis.forEach(card => {
+                if (card.getAttribute('data-category') !== 'infantil') {
+                    todosInfantis = false;
+                }
+            });
+
+            if (todosInfantis) {
+                logAssertion(5, true, "Todos os cards exibidos possuem o atributo data-category='infantil'.");
+            } else {
+                logAssertion(5, false, "Um ou mais cards visíveis pertencem a outra categoria.");
+                testeOk = false;
+            }
+
+            finalizarTeste(5, testeOk);
+        }
+
+        async function rodarTeste6() {
+            setBadge(6, 'running', 'Executando');
+            let testeOk = true;
+
+            // Restaura os 4 produtos originais no localStorage para garantir ambiente controlado
+            localStorage.setItem('produtos_catalogo', JSON.stringify(pijamasPadrao));
+
+            const { win, doc } = await loadIframe('painel do admistrador.html');
+
+            // Verifica se renderizou 4 itens na tabela
+            const linhas = doc.querySelectorAll('#tabela-produtos tr');
+            if (linhas.length === 4) {
+                logAssertion(6, true, "Tabela administrativa carregou as 4 linhas dos pijamas padrão.");
+            } else {
+                logAssertion(6, false, `Linhas na tabela: esperava 4, encontrou ${linhas.length}`);
+                testeOk = false;
+            }
+
+            // Contadores rápidos
+            const total = doc.getElementById('qtd-total').innerText;
+            const fem = doc.getElementById('qtd-fem').innerText;
+            const inf = doc.getElementById('qtd-inf').innerText;
+
+            if (total === "4" && fem === "2" && inf === "2") {
+                logAssertion(6, true, "Cards de resumo inicializados corretamente: Total: 4, Feminino: 2, Infantil: 2.");
+            } else {
+                logAssertion(6, false, `Resumos incorretos. Encontrado: Total: ${total}, Fem: ${fem}, Inf: ${inf}`);
+                testeOk = false;
+            }
+
+            finalizarTeste(6, testeOk);
+        }
+
+        async function rodarTeste7() {
+            setBadge(7, 'running', 'Executando');
+            let testeOk = true;
+
+            const { win, doc } = await loadIframe('painel do admistrador.html');
+
+            // Preenche o formulário para adicionar um novo pijama feminino
+            doc.getElementById('prod-nome').value = "Pijama Cetim Girafa";
+            doc.getElementById('prod-preco').value = "89.90";
+            doc.getElementById('prod-categoria').value = "feminino";
+            doc.getElementById('prod-img').value = "americano oncinha.jpeg";
+
+            // Simula o submit do formulário
+            // Desativa alert temporariamente para o teste fluir de forma assíncrona sem travar a thread
+            const oldAlert = win.alert;
+            win.alert = () => {};
+
+            const form = doc.getElementById('form-produto');
+            // Dispara submit
+            const event = new Event('submit', { cancelable: true });
+            form.dispatchEvent(event);
+
+            // Restaura o alert original
+            win.alert = oldAlert;
+
+            // Asserções
+            if (win.produtos.length === 5) {
+                logAssertion(7, true, "Lista interna de produtos incrementada para 5.");
+            } else {
+                logAssertion(7, false, `Lista interna não incrementou. Tamanho: ${win.produtos.length}`);
+                testeOk = false;
+            }
+
+            // Verifica salvamento no LocalStorage
+            const stored = JSON.parse(localStorage.getItem('produtos_catalogo'));
+            if (stored && stored.length === 5 && stored[4].nome === "Pijama Cetim Girafa") {
+                logAssertion(7, true, "Novo produto persistido com sucesso no LocalStorage.");
+            } else {
+                logAssertion(7, false, "Falha ao persistir dados do novo pijama no LocalStorage.");
+                testeOk = false;
+            }
+
+            // Valida contadores incrementados
+            const total = doc.getElementById('qtd-total').innerText;
+            const fem = doc.getElementById('qtd-fem').innerText;
+
+            if (total === "5" && fem === "3") {
+                logAssertion(7, true, "Resumos rápidos atualizados: Total: 5, Feminino: 3.");
+            } else {
+                logAssertion(7, false, `Estatísticas incorretas. Total: ${total}, Feminino: ${fem}`);
+                testeOk = false;
+            }
+
+            finalizarTeste(7, testeOk);
+        }
+
+        async function rodarTeste8() {
+            setBadge(8, 'running', 'Executando');
+            let testeOk = true;
+
+            const { win, doc } = await loadIframe('painel do admistrador.html');
+
+            // Simula clique de exclusão no último elemento (Pijama Cetim Girafa, index 4)
+            // Mock do confirm do navegador para retornar true sempre
+            const oldConfirm = win.confirm;
+            win.confirm = () => true;
+            
+            // Mock do alert do navegador
+            const oldAlert = win.alert;
+            win.alert = () => {};
+
+            // Exclui
+            win.excluirProduto(4);
+
+            // Restaura mocks
+            win.confirm = oldConfirm;
+            win.alert = oldAlert;
+
+            // Asserções
+            if (win.produtos.length === 4) {
+                logAssertion(8, true, "Produto excluído. Lista interna reduziu para 4.");
+            } else {
+                logAssertion(8, false, `Lista não reduziu. Tamanho atual: ${win.produtos.length}`);
+                testeOk = false;
+            }
+
+            const stored = JSON.parse(localStorage.getItem('produtos_catalogo'));
+            if (stored && stored.length === 4) {
+                logAssertion(8, true, "LocalStorage atualizado com 4 produtos restantes.");
+            } else {
+                logAssertion(8, false, "LocalStorage não sincronizou após exclusão.");
+                testeOk = false;
+            }
+
+            const total = doc.getElementById('qtd-total').innerText;
+            const fem = doc.getElementById('qtd-fem').innerText;
+            if (total === "4" && fem === "2") {
+                logAssertion(8, true, "Resumos rápidos reajustados: Total: 4, Feminino: 2.");
+            } else {
+                logAssertion(8, false, `Contadores incorretos pós-exclusão. Total: ${total}, Fem: ${fem}`);
+                testeOk = false;
+            }
+
+            finalizarTeste(8, testeOk);
+        }
+
+        function finalizarTeste(id, ok) {
+            if (ok) {
+                setBadge(id, 'passed', 'Sucesso');
+                sucessos++;
+                document.getElementById('stat-sucesso').innerText = sucessos;
+            } else {
+                setBadge(id, 'failed', 'Falha');
+                falhas++;
+                document.getElementById('stat-falha').innerText = falhas;
+            }
+        }
+    </script>
+</body>
+</html>

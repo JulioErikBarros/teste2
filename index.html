@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sonho de Pijamas</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="painel-erro">
+        ⚙️ Sincronização Ativa. Caso faça alterações, lembre-se de redefinir: <button onclick="forcarLimpezaEletrica()" style="background:#dfb86c; color:#101b37; border:none; padding:6px 12px; cursor:pointer; font-weight:bold; margin-left:10px; border-radius:20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">Limpar Memória do Navegador</button>
+    </div>
+
+    <header>
+        <div class="logo">🌙 Sonho de Pijamas</div>
+        <nav>
+            <a href="#catalogo">Catálogo</a>
+            <a href="#contato">Contato</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div>
+            <h1>Durma melhor.<br>Vista conforto.</h1>
+            <p>Pijamas confortáveis para todas as idades. Confortáveis, delicados e feitos para noites tranquilas.</p>
+            <a class="botao" href="#catalogo">Ver Catálogo</a>
+        </div>
+        <div>
+            <img src="foto 01.jpeg" alt="Pijama">
+        </div>
+    </section>
+
+    <section class="container" id="catalogo">
+        <h2 class="titulo">Catálogo</h2>
+        
+        <div class="busca">
+            <input type="text" id="campo-busca" placeholder="Pesquisar pijamas..." onkeyup="filtrarPijamas()">
+            
+            <div class="filtros">
+                <div class="filtro ativo" onclick="filtrarCategoria('todos', this)">Todos</div>
+                <div class="filtro" onclick="filtrarCategoria('feminino', this)">Feminino</div>
+                <div class="filtro" onclick="filtrarCategoria('infantil', this)">Infantil</div>
+            </div>
+        </div>
+
+        <div class="grid" id="grid-produtos"></div>
+    </section>
+
+    <section class="container" id="contato">
+        <h2 class="titulo">Contato</h2>
+        
+        <div class="contato-wrapper">
+            <div class="contato-info">
+                <h3>Fale Conosco</h3>
+                <p>Tem dúvidas sobre tamanhos, tecidos ou quer fazer uma encomenda personalizada? Fale com a gente diretamente pelos nossos canais oficiais de atendimento!</p>
+                
+                <div class="contato-links">
+                    <div class="contato-item">
+                        <div class="icon">📱</div>
+                        <div class="contato-texto">
+                            <strong>WhatsApp Oficial</strong>
+                            <a href="https://wa.me/5585987425849" target="_blank">(85) 98742-5849</a>
+                        </div>
+                    </div>
+
+                    <div class="contato-item">
+                        <div class="icon">📸</div>
+                        <div class="contato-texto">
+                            <strong>Siga no Instagram</strong>
+                            <a href="https://www.instagram.com/sonhodepijam_?igsh=MXVzcmcxN283OTV3NQ=" target="_blank">@sonhodepijam_</a>
+                        </div>
+                    </div>
+
+                    <div class="contato-item">
+                        <div class="icon">📍</div>
+                        <div class="contato-texto">
+                            <strong>Localização</strong>
+                            <span style="display: block; margin-bottom: 3px;">Endereço: Av. Tenente José Newton</span>
+                            <span style="display: block; margin-bottom: 3px;">Bairro: Messejana</span> 
+                            <span style="display: block;">Cidade: Fortaleza</span> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contato-lateral">
+                <div>
+                    <h3>Horário de Atendimento</h3>
+                    <ul class="horarios">
+    <li>Segunda á Sexta <span>09h às 18h</span></li>
+    <li>Sábado e Domingo<span>Entregas Online</span></li>
+</ul>
+                
+                <div class="mensagem-carinho">
+                    "Feito carinho e embalado com cheirinho de sonho. Pronta para ter a sua melhor noite de sono?" 😴💤
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="sacola-bar" id="sacola">
+        <div class="sacola-info">
+            <h4 id="itens-qtd">Sacola: 0 item</h4>
+            <p id="total-preco">R$ 0,00</p>
+            <button class="limpar-sacola" onclick="limparCarrinho()">Esvaziar</button>
+        </div>
+        <button class="btn-finalizar" onclick="enviarPedidoWhatsApp()">
+            🛒 Finalizar via WhatsApp
+        </button>
+    </div>
+
+    <footer>
+        <h2>🌙 Sonho de Pijamas</h2>
+        <p>&copy; 2026 Sonho de Pijamas. Todos os direitos reservados. Feito com amor e conforto.</p>
+    </footer>
+
+    <script>
+        const TELEFONE_WHATSAPP = "5585987425849"; 
+        let carrinho = [];
+
+        const pijamasPadrao = [
+            { id: 1, nome: "Baby Alça Hello kitty", preco: 53.00, categoria: "feminino", img: "baby alça (2).jpeg" },
+            { id: 2, nome: "Camisola Mia", preco: 58.00, categoria: "feminino", img: "WhatsApp Image 2026-07-15 at 12.56.06.jpeg" },
+            { id: 3, nome: "Baby Sonho M. Super Poderosas", preco: 64.00, categoria: "infantil", img: "baby alça.jpeg" },
+            { id: 4, nome: "Americano Snoopy", preco: 100.00, categoria: "infantil", img: "babysonho.jpeg.jpeg" }
+        ];
+
+        let listaProdutos = [];
+
+        function forcarLimpezaEletrica() {
+            localStorage.clear();
+            localStorage.setItem('produtos_catalogo', JSON.stringify(pijamasPadrao));
+            alert("Memória limpa! Página reiniciada.");
+            location.reload();
+        }
+
+        // Função de escape para prevenir XSS
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        try {
+            const dadosLocais = localStorage.getItem('produtos_catalogo');
+            if (!dadosLocais || dadosLocais === "undefined" || dadosLocais === "null" || dadosLocais === "[]") {
+                localStorage.setItem('produtos_catalogo', JSON.stringify(pijamasPadrao));
+                listaProdutos = pijamasPadrao;
+            } else {
+                listaProdutos = JSON.parse(dadosLocais);
+            }
+        } catch (e) {
+            listaProdutos = pijamasPadrao;
+        }
+
+        let filtroCategoriaAtual = 'todos';
+
+        function renderizarCatalogo() {
+            const grid = document.getElementById('grid-produtos');
+            if (!grid) return;
+            
+            grid.innerHTML = ""; 
+
+            listaProdutos.forEach(pijama => {
+                let cat = pijama.categoria || pijama.category || 'todos';
+                cat = cat.toLowerCase().trim();
+
+                grid.innerHTML += `
+                    <div class="card" data-category="${escapeHTML(cat)}">
+                        <img src="${escapeHTML(pijama.img)}" alt="${escapeHTML(pijama.nome)}" onerror="this.src='https://via.placeholder.com/220x210?text=Imagem'">
+                        <div class="info">
+                            <h3>${escapeHTML(pijama.nome)}</h3>
+                            <div class="preco">R$ ${Number(pijama.preco).toFixed(2).replace('.', ',')}</div>
+                            <button class="add-bag" 
+                                    data-nome="${escapeHTML(pijama.nome)}" 
+                                    data-preco="${pijama.preco}" 
+                                    onclick="adicionarAoCarrinhoBtn(this)">
+                                Adicionar à Sacola
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            aplicarFiltrosCombinados();
+        }
+
+        function adicionarAoCarrinhoBtn(btn) {
+            const nome = btn.getAttribute('data-nome');
+            const preco = parseFloat(btn.getAttribute('data-preco'));
+            adicionarAoCarrinho(nome, preco);
+        }
+
+        function adicionarAoCarrinho(nome, preco) {
+            const itemExistente = carrinho.find(item => item.nome === nome);
+            if (itemExistente) { 
+                itemExistente.quantidade += 1; 
+            } else { 
+                carrinho.push({ nome: nome, preco: Number(preco), quantidade: 1 }); 
+            }
+            atualizarInterfaceSacola();
+        }
+
+        function atualizarInterfaceSacola() {
+            const sacola = document.getElementById('sacola');
+            const itensQtd = document.getElementById('itens-qtd');
+            const totalPreco = document.getElementById('total-preco');
+            
+            if (carrinho.length === 0) { 
+                if(sacola) sacola.classList.remove('active'); 
+                return; 
+            }
+            
+            let totalItens = 0; 
+            let valorTotal = 0;
+            
+            carrinho.forEach(item => { 
+                totalItens += item.quantidade; 
+                valorTotal += (item.preco * item.quantidade); 
+            });
+            
+            if(itensQtd) itensQtd.innerText = `Sacola: ${totalItens} ${totalItens === 1 ? 'item' : 'itens'}`;
+            if(totalPreco) totalPreco.innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
+            if(sacola) sacola.classList.add('active');
+        }
+
+        function limparCarrinho() { 
+            carrinho = []; 
+            atualizarInterfaceSacola(); 
+        }
+
+        function enviarPedidoWhatsApp() {
+            if (carrinho.length === 0) return;
+            let mensagem = "Olá, Sonho de Pijamas! Gostaria de encomendar os seguintes produtos:\n\n";
+            let valorTotal = 0;
+            
+            carrinho.forEach(item => {
+                valorTotal += item.preco * item.quantidade;
+                mensagem += `🔹 *${item.quantidade}x* ${item.nome} - R$ ${item.preco.toFixed(2).replace('.', ',')} cada\n`;
+            });
+            
+            mensagem += `\n*Total do Pedido:* R$ ${valorTotal.toFixed(2).replace('.', ',')}\n\nPode me ajudar a finalizar a compra?`;
+            window.open(`https://wa.me/${TELEFONE_WHATSAPP}?text=${encodeURIComponent(mensagem)}`, '_blank');
+        }
+
+        function aplicarFiltrosCombinados() {
+            const buscaInput = document.getElementById('campo-busca');
+            const termoBusca = buscaInput ? buscaInput.value.toLowerCase().trim() : "";
+            const cards = document.querySelectorAll('.card');
+
+            cards.forEach(card => {
+                const titulo = card.querySelector('.info h3').innerText.toLowerCase();
+                const categoriaCard = card.getAttribute('data-category') ? card.getAttribute('data-category').toLowerCase().trim() : "";
+
+                const atendeBusca = titulo.includes(termoBusca);
+                const atendeCategoria = (filtroCategoriaAtual === 'todos' || categoriaCard === filtroCategoriaAtual);
+
+                if (atendeBusca && atendeCategoria) {
+                    card.classList.remove('escondido');
+                } else {
+                    card.classList.add('escondido');
+                }
+            });
+        }
+
+        function filtrarPijamas() {
+            aplicarFiltrosCombinados();
+        }
+
+        function filtrarCategoria(categoria, elementoBotao) {
+            document.querySelectorAll('.filtro').forEach(b => b.classList.remove('ativo'));
+            if(elementoBotao) elementoBotao.classList.add('ativo');
+            
+            filtroCategoriaAtual = categoria.toLowerCase().trim();
+            aplicarFiltrosCombinados();
+        }
+
+        window.onload = function() {
+            renderizarCatalogo();
+        };
+    </script>
+</body>
+</html>
